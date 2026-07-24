@@ -11,7 +11,7 @@ class Item:
 
     def aumentar_estoque(self, quantidade):
         if quantidade <= 0:
-            raise ValueError("Numeros negativos não são permitidos.")
+            raise ValueError("Quantidade deve ser positiva.")
         else:
             self.quantidade += quantidade
 
@@ -24,6 +24,8 @@ class Item:
         else:
             self.quantidade -= quantidade
 
-    
+    def exibir_dados(self):
+        return f"ID: {self.id} | Categoria: {self.categoria} | Nome: {self.nome} | Quantidade: {self.quantidade} | Cadastrado: {self.data_cadastro}"
+
 
 
