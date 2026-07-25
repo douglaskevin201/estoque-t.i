@@ -1,13 +1,25 @@
+from sqlalchemy import Column, Integer, String, DateTime, create_engine
+from datetime import datetime
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+
+Base = declarative_base()
+engine = create_engine('sqlite:///estoque.db')
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+class Item(Base):
+    __tablename__ = 'itens'
+
+    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    categoria = Column(String(500), nullable=False)
+    nome = Column(String(500), nullable=False)
+    quantidade = Column(Integer, default=0)
+    data = Column(DateTime, default=datetime.now)
 
 
 
-class Item:
-    def __init__(self, id, categoria, nome, quantidade, data_cadastro):
-        self.id = id
-        self.categoria = categoria
-        self.nome = nome
-        self.quantidade = quantidade
-        self.data_cadastro = data_cadastro
 
     def aumentar_estoque(self, quantidade):
         if quantidade <= 0:
@@ -25,7 +37,7 @@ class Item:
             self.quantidade -= quantidade
 
     def exibir_dados(self):
-        return f"ID: {self.id} | Categoria: {self.categoria} | Nome: {self.nome} | Quantidade: {self.quantidade} | Cadastrado: {self.data_cadastro}"
+        return f"ID: {self.id} | Categoria: {self.categoria} | Nome: {self.nome} | Quantidade: {self.quantidade} | Cadastrado: {self.data}"
 
 
 

@@ -1,6 +1,6 @@
-from models import Item
+from models import Item, session
 
-itens = []
+
 
 
 def menu():
@@ -25,52 +25,47 @@ def menu_principal():
         elif opcao == 3:
             id_item = int(input("ID do item: "))
             quantidade = int(input("Quantidade"))
-            for item in itens:
-                if item.id == id_item:
-                    item.aumentar_estoque(quantidade)
-                    encontrado = True
-                    break
-                if not encontrado:
-                    print
+            item = session.query(Item).filter_by(id=id_item).first()
+            if item:
+                item.aumentar_estoque(quantidade)
+                session.commit()
 
         elif opcao == 4:
             id_item = int(input("ID do item: "))
             quantidade = int(input("Quantidade: "))
-            for item in itens:
-                if item.id == id_item:
-                    item.diminuir_estoque(quantidade)
-                    encontrado = True
-                    break
-                if not encontrado:
-                    print("Item nao encontrado!")
+            item = session.query(Item).filter_by(id=id_item).first()
+            if item:
+                item.diminuir_estoque(quantidade)
+                session.commit()
 
         elif opcao == 5:
             break
 
 
 def cadastrar_item():
-    id = int(input("ID: "))
     categoria = input("Categoria: ")
     nome = input("Nome: ")
     quantidade = int(input("Quantidade: "))
-    data = input("Data de cadastro: ")
 
-    novo_item = Item(id, categoria, nome, quantidade, data)
-    itens.append(novo_item)
+    novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
+    session.add(novo_item)
+    session.commit()
 
 
 
 def listar_itens():
+    itens = session.query(Item).all()
     if not itens:
         print("Nenhum Item encontrado")
-        return
+        return 
     print("\n--- ITENS NO ESTOQUE --- ")
     for item in itens:
-        print(f"ID: {item.id} | Categoria: {item.categoria} | Quantidade: {item.quantidade} | Data: {item.data_cadastro}")
+        print(f"ID: {item.id} | Categoria: {item.categoria} | Quantidade: {item.quantidade} | Data: {item.data}")
     print("-" * 20)
 
 
 menu_principal()
+session.close()
 
 
     
