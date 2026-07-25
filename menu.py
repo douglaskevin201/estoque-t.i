@@ -53,6 +53,7 @@ def cadastrar_item():
 
 
 
+
 def listar_itens():
     itens = session.query(Item).all()
     if not itens:
