@@ -61,12 +61,13 @@ def listar_itens():
         return 
     print("\n--- ITENS NO ESTOQUE --- ")
     for item in itens:
-        print(f"ID: {item.id} | Categoria: {item.categoria} | Quantidade: {item.quantidade} | Data: {item.data}")
+        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data}")
     print("-" * 20)
 
 
 menu_principal()
 session.close()
+
 
 
     
