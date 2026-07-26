@@ -26,17 +26,25 @@ def menu_principal():
             id_item = int(input("ID do item: "))
             quantidade = int(input("Quantidade"))
             item = session.query(Item).filter_by(id=id_item).first()
-            if item:
+            try:
                 item.aumentar_estoque(quantidade)
                 session.commit()
+                print("Estoque atualizado com sucesso!")
+            except ValueError as e:
+                session.rollback()
+                print("Erro ao atualizar o estoque:", str(e))
 
         elif opcao == 4:
             id_item = int(input("ID do item: "))
             quantidade = int(input("Quantidade: "))
             item = session.query(Item).filter_by(id=id_item).first()
-            if item:
+            try:
                 item.diminuir_estoque(quantidade)
+                print("Estoque atualizado com sucesso!")
                 session.commit()
+            except ValueError as e:
+                session.rollback()
+                print("Erro ao atualizar o estoque:", str(e))
 
         elif opcao == 5:
             break
@@ -71,9 +79,5 @@ session.close()
 
 
     
-
-
-
-
 
     
