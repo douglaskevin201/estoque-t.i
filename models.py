@@ -11,7 +11,7 @@ session = Session()
 class Item(Base):
     __tablename__ = 'itens'
 
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     categoria = Column(String(500), nullable=False)
     nome = Column(String(500), nullable=False)
     quantidade = Column(Integer, default=0)
