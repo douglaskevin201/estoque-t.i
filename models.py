@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from datetime import datetime
 from sqlalchemy.orm import declarative_base, sessionmaker
-from time import sleep
+
 
 
 Base = declarative_base()
