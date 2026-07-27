@@ -5,13 +5,13 @@ from time import sleep
 
 
 def menu():
-        print("\nEstoque T.I UniEnsino")
-        print("1 - Cadastrar um novo item ")
-        print("2 - Listar itens")
-        print("3 - Aumentar estoque")
-        print("4 - Diminuir estoque")
-        print("5 - Sair")
-        return int(input("Escolha uma opcao: "))
+    print("\nEstoque T.I UniEnsino")
+    print("1 - Cadastrar um novo item ")
+    print("2 - Listar itens")
+    print("3 - Aumentar estoque")
+    print("4 - Diminuir estoque")
+    print("5 - Sair")
+    return int(input("Escolha uma opcao: "))
 
 
 def menu_principal():
