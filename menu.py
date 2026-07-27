@@ -1,17 +1,31 @@
 from models import Item, session
 from time import sleep
+from sqlalchemy.exc import SQLAlchemyError
+
 
 
 
 
 def menu():
-    print("\nEstoque T.I UniEnsino")
-    print("1 - Cadastrar um novo item ")
-    print("2 - Listar itens")
-    print("3 - Aumentar estoque")
-    print("4 - Diminuir estoque")
-    print("5 - Sair")
-    return int(input("Escolha uma opcao: "))
+    while True:
+        try:
+            print("\nEstoque T.I UniEnsino")
+            print("1 - Cadastrar um novo item ")
+            print("2 - Listar itens")
+            print("3 - Aumentar estoque")
+            print("4 - Diminuir estoque")
+            print("5 - Sair")
+            opcao = int(input("Escolha uma opcao: "))
+            if 1 <= opcao <= 5:
+                return opcao
+            else:
+                print("Opção invalida. Escolha um número entre 1 e 5.")
+        except ValueError:
+            print("Entrada inválida. Digite o número da opção.")
+        except KeyboardInterrupt:
+            print("\nInterrompido pelo usuário. Saindo.")
+            return 5
+
 
 
 def menu_principal():
@@ -53,8 +67,9 @@ def menu_principal():
 
             try:
                 item.diminuir_estoque(quantidade)
-                print("Estoque atualizado com sucesso!")
                 session.commit()
+                print("Estoque atualizado com sucesso!")
+
             except ValueError as e:
                 session.rollback()
                 print("Erro ao atualizar o estoque:", str(e))
@@ -67,14 +82,40 @@ def menu_principal():
 
 
 def cadastrar_item():
-    categoria = input("Categoria: ")
-    nome = input("Nome: ")
-    quantidade = int(input("Quantidade: "))
+    while True:
+        categoria = input("Categoria: ")
+        nome = input("Nome: ")
+        
+        try:
+            quantidade = int(input("Quantidade: "))
+            if quantidade <= 0:
+                print("Quantidade invalida, Digite um número positivo.")
+                continue
+            else:
+                novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
+                try:
+                    session.add(novo_item)
+                    session.commit()
+                    print(f"{novo_item.nome} cadastrado com sucesso com {novo_item.quantidade}Qnt.")
+                    break
+                except SQLAlchemyError as e:
+                    session.rollback()
+                    print("Erro ao salvar o item:", e)
+                    
+     
+        except ValueError:
+            print("Quantidade invalida, Digite um número positivo.")
+            continue
 
-    novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
-    session.add(novo_item)
-    session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            print("Erro ao salvar produto no banco de dados, Tente novamente")
 
+
+            
+
+
+        
 
 
 

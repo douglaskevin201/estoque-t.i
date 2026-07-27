@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from datetime import datetime
 from sqlalchemy.orm import declarative_base, sessionmaker
+from time import sleep
 
 
 Base = declarative_base()
@@ -34,6 +35,11 @@ class Item(Base):
             raise ValueError("Quantidade insuficiente em estoque.")
         else:
             self.quantidade -= quantidade
+
+
+        
+
+            
 
     def exibir_dados(self):
         return f"ID: {self.id} | Categoria: {self.categoria} | Nome: {self.nome} | Quantidade: {self.quantidade} | Cadastrado: {self.data}"
