@@ -96,7 +96,7 @@ def cadastrar_item():
                 try:
                     session.add(novo_item)
                     session.commit()
-                    print(f"{novo_item.nome} cadastrado com sucesso com {novo_item.quantidade}Qnt.")
+                    print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
                     break
                 except SQLAlchemyError as e:
                     session.rollback()
@@ -112,13 +112,7 @@ def cadastrar_item():
             print("Erro ao salvar produto no banco de dados, Tente novamente")
 
 
-            
-
-
-        
-
-
-
+                    
 def listar_itens():
     itens = session.query(Item).all()
     if not itens:
