@@ -1,6 +1,7 @@
 from models import Item, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 
@@ -38,22 +39,29 @@ def menu_principal():
             listar_itens()
 
         elif opcao == 3:
-            id_item = int(input("ID do item: "))
-            quantidade = int(input("Quantidade: "))
-            item = session.query(Item).filter_by(id=id_item).first()
+            while True:
+                try:
+                    id_item = int(input("ID do item: "))
+                    quantidade = int(input("Quantidade: "))                    
+                    break
 
+                except ValueError:
+                    print("Digite somente numeros inteiros!")
+                    continue
+                
+            item = session.query(Item).filter_by(id=id_item).first()    
             if item is None:
                 print("Item não encontrado.")
-                sleep(1)
-                continue
-
-            try:
-                item.aumentar_estoque(quantidade)
-                session.commit()
-                print("Estoque atualizado com sucesso!")
-            except ValueError as e:
-                session.rollback()
-                print("Erro ao atualizar o estoque:", str(e))
+                                                                                          
+            else:
+                try:
+                    item.aumentar_estoque(quantidade)
+                    session.commit()
+                    print("Estoque atualizado com sucesso!")
+                    
+                except ValueError as e:
+                    session.rollback()
+                    print("Erro ao atualizar o estoque:", str(e))
             
         elif opcao == 4:
             id_item = int(input("ID do item: "))
