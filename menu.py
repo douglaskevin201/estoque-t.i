@@ -1,16 +1,17 @@
 from models import Item, session
+from time import sleep
 
 
 
 
 def menu():
-    print("\nEstoque T.I UniEnsino")
-    print("1 - Cadastrar um novo item ")
-    print("2 - Listar itens")
-    print("3 - Aumentar estoque")
-    print("4 - Diminuir estoque")
-    print("5 - Sair")
-    return int(input("Escolha uma opcao: "))
+        print("\nEstoque T.I UniEnsino")
+        print("1 - Cadastrar um novo item ")
+        print("2 - Listar itens")
+        print("3 - Aumentar estoque")
+        print("4 - Diminuir estoque")
+        print("5 - Sair")
+        return int(input("Escolha uma opcao: "))
 
 
 def menu_principal():
@@ -24,8 +25,14 @@ def menu_principal():
 
         elif opcao == 3:
             id_item = int(input("ID do item: "))
-            quantidade = int(input("Quantidade"))
+            quantidade = int(input("Quantidade: "))
             item = session.query(Item).filter_by(id=id_item).first()
+
+            if item is None:
+                print("Item não encontrado.")
+                sleep(1)
+                continue
+
             try:
                 item.aumentar_estoque(quantidade)
                 session.commit()
@@ -33,11 +40,17 @@ def menu_principal():
             except ValueError as e:
                 session.rollback()
                 print("Erro ao atualizar o estoque:", str(e))
-
+            
         elif opcao == 4:
             id_item = int(input("ID do item: "))
             quantidade = int(input("Quantidade: "))
             item = session.query(Item).filter_by(id=id_item).first()
+
+            if item is None:
+                print("Item não encontrado.")
+                sleep(1)
+                continue
+
             try:
                 item.diminuir_estoque(quantidade)
                 print("Estoque atualizado com sucesso!")
@@ -47,7 +60,10 @@ def menu_principal():
                 print("Erro ao atualizar o estoque:", str(e))
 
         elif opcao == 5:
+            print("Saindo do programa...")
+            sleep(1)
             break
+            
 
 
 def cadastrar_item():
@@ -69,7 +85,7 @@ def listar_itens():
         return 
     print("\n--- ITENS NO ESTOQUE --- ")
     for item in itens:
-        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data}")
+        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
     print("-" * 20)
 
 
