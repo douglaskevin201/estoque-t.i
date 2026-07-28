@@ -58,7 +58,7 @@ def menu_principal():
                     item.aumentar_estoque(quantidade)
                     session.commit()
                     print("Estoque atualizado com sucesso!")
-                    
+
                 except ValueError as e:
                     session.rollback()
                     print("Erro ao atualizar o estoque:", str(e))
