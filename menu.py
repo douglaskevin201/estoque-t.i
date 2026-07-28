@@ -15,17 +15,18 @@ def menu():
             print("2 - Listar itens")
             print("3 - Aumentar estoque")
             print("4 - Diminuir estoque")
-            print("5 - Sair")
+            print("5 - Apagar item do estoque")
+            print("6 - Sair")
             opcao = int(input("Escolha uma opcao: "))
-            if 1 <= opcao <= 5:
+            if 1 <= opcao <= 6:
                 return opcao
             else:
-                print("Opção invalida. Escolha um número entre 1 e 5.")
+                print("Opção invalida. Escolha um número entre 1 e 6.")
         except ValueError:
             print("Entrada inválida. Digite o número da opção.")
         except KeyboardInterrupt:
             print("\nInterrompido pelo usuário. Saindo.")
-            return 5
+            return 6
 
 
 
@@ -95,6 +96,31 @@ def menu_principal():
                     print("Erro ao atualizar o estoque:", str(i))
 
         elif opcao == 5:
+
+            while True:
+                try:
+                    id_item = int(input("ID do Item a ser excluido: "))
+                    break
+                except ValueError:
+                    print("Digite somente números inteiros!")
+                    continue
+            item = session.query(Item).filter_by(id=id_item).first()
+            if item is None:
+                print(f"Item com ID: {id_item} não foi encontrado")
+
+            else:
+                try:
+                    session.delete(item)
+                    session.commit()
+                    print("Produto exluido com sucesso!")
+                    
+
+                except SQLAlchemyError as e:
+                    session.rollback()
+                    print("Erro ao excluir item do estoque!", str(e))
+
+
+        elif opcao == 6:
             print("Saindo do programa...")
             sleep(1)
             break
@@ -150,6 +176,8 @@ def listar_itens():
     for item in itens:
         print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
     print("-" * 20)
+
+
 
 
 menu_principal()
