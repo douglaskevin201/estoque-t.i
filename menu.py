@@ -39,7 +39,7 @@ def menu_principal():
             listar_itens()
 
         elif opcao == 3:
-            
+
             while True:
                 try:
                     id_item = int(input("ID do item: "))
@@ -71,7 +71,7 @@ def menu_principal():
                     quantidade = int(input("Quantidade: "))
                     break
                 except ValueError:
-                    print("Digite somente numero inteiros!")
+                    print("Digite somente números inteiros!")
                     continue
 
             item = session.query(Item).filter_by(id=id_item).first()
@@ -88,6 +88,11 @@ def menu_principal():
                 except ValueError as e:
                     session.rollback()
                     print("Erro ao atualizar o estoque:", str(e))
+                    
+
+                except SQLAlchemyError as i:
+                    session.rollback()
+                    print("Erro ao atualizar o estoque:", str(i))
 
         elif opcao == 5:
             print("Saindo do programa...")
@@ -98,34 +103,42 @@ def menu_principal():
 
 def cadastrar_item():
     while True:
-        categoria = input("Categoria: ")
-        nome = input("Nome: ")
+        categoria = input("Categoria: ").strip()
+        if not categoria:
+            print("Erro: Categoria não deve ter campo vazio.")
+            continue
+
+        nome = input("Nome: ").strip()
+        if not nome:
+            print("Erro: O nome não deve ter campo vazio.")
+            continue
+
+        
+        categoria = categoria.upper()
+        nome = nome.upper()            
+        
         
         try:
             quantidade = int(input("Quantidade: "))
             if quantidade <= 0:
                 print("Quantidade invalida, Digite um número positivo.")
                 continue
-            else:
-                novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
-                try:
-                    session.add(novo_item)
-                    session.commit()
-                    print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
-                    break
-                except SQLAlchemyError as e:
-                    session.rollback()
-                    print("Erro ao salvar o item:", e)
-                    
-     
+
         except ValueError:
-            print("Quantidade invalida, Digite um número positivo.")
+            print("ERRO: Digite apenas números inteiros.")
             continue
 
-        except SQLAlchemyError:
+        try:
+            novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
+            session.add(novo_item)
+            session.commit()
+            print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
+            break
+        except SQLAlchemyError as e:
             session.rollback()
-            print("Erro ao salvar produto no banco de dados, Tente novamente")
-
+            print("Erro ao salvar o item:", e)
+            break
+                    
 
                     
 def listar_itens():
