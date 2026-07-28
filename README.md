@@ -28,7 +28,7 @@ Todas as operações validam a entrada do usuário e tratam erros de forma que o
 
 ```bash
 # clonar o repositório
-git clone <url-do-repositorio>
+git clone <https://github.com/douglaskevin201/estoque-t.i>
 cd estoque-t.i
 
 # instalar dependências
