@@ -1,7 +1,7 @@
 from models import Item, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm.exc import NoResultFound
+
 
 
 
