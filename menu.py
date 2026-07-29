@@ -105,6 +105,7 @@ def menu_principal():
                     print("Digite somente números inteiros!")
                     continue
             item = session.query(Item).filter_by(id=id_item).first()
+            
             if item is None:
                 print(f"Item com ID: {id_item} não foi encontrado")
 
