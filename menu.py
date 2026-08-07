@@ -1,4 +1,4 @@
-from models import Item, session
+from models import Item, Item_hardware, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -160,7 +160,11 @@ def cadastrar_item():
             session.add(novo_item)
             session.commit()
             print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
-            break
+            if categoria == 'HARDWARE':
+                novo_item = Item_hardware(categoria=categoria, nome=nome, quantidade=quantidade)
+                session.add(novo_item)
+                session.commit()
+                break
         except SQLAlchemyError as e:
             session.rollback()
             print("Erro ao salvar o item:", e)
