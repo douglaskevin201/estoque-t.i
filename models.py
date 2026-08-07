@@ -17,7 +17,7 @@ class Item(Base):
     nome = Column(String(500), nullable=False)
     quantidade = Column(Integer, default=0)
     data = Column(DateTime, default=datetime.now)
-    hardware = relationship("item_hardware", back_populates="item", uselist=False)
+    hardware = relationship("Item_hardware", back_populates="item", uselist=False)
 
 
 
@@ -43,8 +43,9 @@ class Item(Base):
 class Item_hardware(Base):
     __tablename__ = "hardware"
 
-    item_id = Column(Integer, ForeignKey("itens.id"), unique=True)
-    item = relationship("item", back_populates="hardware")
+    item_id = Column(Integer, ForeignKey("itens.id"),primary_key=True)
+    item = relationship("Item", back_populates="hardware")
+    
     
     
 

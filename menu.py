@@ -161,8 +161,8 @@ def cadastrar_item():
             session.commit()
             print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
             if categoria == 'HARDWARE':
-                novo_item = Item_hardware(categoria=categoria, nome=nome, quantidade=quantidade)
-                session.add(novo_item)
+                novo_hardware = Item_hardware(item_id=novo_item.id)
+                session.add(novo_hardware)
                 session.commit()
                 break
         except SQLAlchemyError as e:
