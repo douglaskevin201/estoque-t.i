@@ -17,7 +17,7 @@ class Item(Base):
     nome = Column(String(500), nullable=False)
     quantidade = Column(Integer, default=0)
     data = Column(DateTime, default=datetime.now)
-    hardware = relationship("Item_hardware", back_populates="item", uselist=False)
+    hardware = relationship("ItemHardware", back_populates="item", uselist=False)
 
 
 
@@ -40,7 +40,7 @@ class Item(Base):
     def exibir_dados(self):
         return f"ID: {self.id} | Categoria: {self.categoria} | Nome: {self.nome} | Quantidade: {self.quantidade} | Cadastrado: {self.data}"
 
-class Item_hardware(Base):
+class ItemHardware(Base):
     __tablename__ = "hardware"
 
     item_id = Column(Integer, ForeignKey("itens.id"),primary_key=True)

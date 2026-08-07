@@ -1,4 +1,4 @@
-from models import Item, Item_hardware, session
+from models import Item, ItemHardware, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -161,7 +161,7 @@ def cadastrar_item():
             session.commit()
             print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
             if categoria == 'HARDWARE':
-                novo_hardware = Item_hardware(item_id=novo_item.id)
+                novo_hardware = ItemHardware(item_id=novo_item.id)
                 session.add(novo_hardware)
                 session.commit()
                 break
@@ -181,6 +181,15 @@ def listar_itens():
     for item in itens:
         print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
     print("-" * 20)
+    hw = session.query(ItemHardware).all()
+    if not hw:
+        print("Nenhum Item encontrado na tabela hardware")
+        return
+    print("\n--- ITENS HARDWARE DO ESTOQUE --- ")
+    for hws in hw:
+        print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade}")
+    print("-" * 20)
+
 
 
 
