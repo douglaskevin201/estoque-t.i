@@ -65,6 +65,10 @@ def menu_principal():
                 except ValueError as e:
                     session.rollback()
                     print("Erro ao atualizar o estoque:", str(e))
+
+                except SQLAlchemyError as i:
+                    session.rollback()
+                    print("Erro ao atualizar o estoque:", str(i))
             
         elif opcao == 4:
             while True:
@@ -181,23 +185,42 @@ def cadastrar_item():
 
                     
 def listar_itens():
-    itens = session.query(Item).all()
-    if not itens:
-        print("Nenhum Item encontrado")
-        return 
-    print("\n--- ITENS NO ESTOQUE --- ")
-    for item in itens:
-        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Status: {item.status} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
-    print("-" * 20)
-    hw = session.query(ItemHardware).all()
-    if not hw:
-        print("Tabela de hardware está vazia!")
-        return
-    print("\n--- ITENS HARDWARE DO ESTOQUE --- ")
-    for hws in hw:
-        print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade} | Status: {hws.item.status} | Data: {hws.item.data.strftime('%d/%m/%y %H:%M:%S')}")
-    print("-" * 20)
+    while True:
+        try:
+            print("\nSelecione a categoria")
+            print("1 - Todos")
+            print("2 - Hardware")
+            opcao = int(input("Escolha uma opção: "))
 
+            if opcao == 1 :
+                itens = session.query(Item).all()
+                if not itens:
+                    print("Nenhum Item encontrado")
+                    return
+                print("\n--- ITENS NO ESTOQUE --- ")
+                for item in itens:
+                    print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Status: {item.status} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
+                    print("-" * 20)
+                    
+
+            elif opcao == 2:
+                hw = session.query(ItemHardware).all()
+                if not hw:
+                    print("Tabela de hardware está vazia!")
+                    return
+                print("\n--- ITENS HARDWARE NO ESTOQUE ---")
+                for hws in hw:
+                    print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade} | Status: {hws.item.status} | Data: {hws.item.data.strftime('%d/%m/%y %H:%M:%S')}")
+                    print("-" * 20)
+
+            else:
+                print("Erro: Numero invalido! Digite um numero dentre as opcoes")
+                continue
+        except ValueError:
+                    print("Entrada inválida. Digite o número da opção.")
+                    continue
+        break    
+        
 
 
 
