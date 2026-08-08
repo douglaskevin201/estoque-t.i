@@ -16,6 +16,7 @@ class Item(Base):
     categoria = Column(String(500), nullable=False)
     nome = Column(String(500), nullable=False)
     quantidade = Column(Integer, default=0)
+    status = Column(String(1000))
     data = Column(DateTime, default=datetime.now)
     hardware = relationship("ItemHardware", back_populates="item", uselist=False)
 

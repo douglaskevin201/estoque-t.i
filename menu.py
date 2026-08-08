@@ -2,6 +2,7 @@ from models import Item, ItemHardware, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
 
+lista_status = ['LIXO', 'FUNCIONANDO', 'CONSERTO']
 
 
 
@@ -140,7 +141,14 @@ def cadastrar_item():
             print("Erro: O nome não deve ter campo vazio.")
             continue
 
-        
+        status = str(input("Status do item (Lixo | Funcionando | Conserto): ")).strip().upper()
+        if not status:
+            print("Erro: Status não deve ter campo Vazio.")
+            continue
+        if status not in lista_status:
+            print("Erro: Status deve estar entre as 3 opções indicadas!")
+            continue
+
         categoria = categoria.upper()
         nome = nome.upper()            
         
@@ -156,7 +164,7 @@ def cadastrar_item():
             continue
 
         try:
-            novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade)
+            novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade, status=status)
             session.add(novo_item)
             session.commit()
             print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
@@ -164,7 +172,7 @@ def cadastrar_item():
                 novo_hardware = ItemHardware(item_id=novo_item.id)
                 session.add(novo_hardware)
                 session.commit()
-                break
+            break
         except SQLAlchemyError as e:
             session.rollback()
             print("Erro ao salvar o item:", e)
@@ -179,15 +187,15 @@ def listar_itens():
         return 
     print("\n--- ITENS NO ESTOQUE --- ")
     for item in itens:
-        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
+        print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Status: {item.status} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
     print("-" * 20)
     hw = session.query(ItemHardware).all()
     if not hw:
-        print("Nenhum Item encontrado na tabela hardware")
+        print("Tabela de hardware está vazia!")
         return
     print("\n--- ITENS HARDWARE DO ESTOQUE --- ")
     for hws in hw:
-        print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade}")
+        print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade} | Status: {hws.item.status} | Data: {hws.item.data.strftime('%d/%m/%y %H:%M:%S')}")
     print("-" * 20)
 
 
