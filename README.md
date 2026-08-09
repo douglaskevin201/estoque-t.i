@@ -1,65 +1,67 @@
 # Estoque T.I.
 
-Sistema de controle de estoque desenvolvido em Python, usando Programação Orientada a Objetos e SQLAlchemy como ORM, com persistência em SQLite. Roda inteiramente via terminal.
+A terminal-based IT inventory management system, built with Python (OOP) and SQLAlchemy, persisted in SQLite.
 
-## Motivação
+## Where this came from
 
-Sou estudante de Análise e Desenvolvimento de Sistemas e estagiário de T.I. Esse projeto nasceu da junção de duas necessidades: fixar na prática o que aprendi em um curso de Python, POO e banco de dados com SQLAlchemy, e ao mesmo tempo ter uma ferramenta real para organizar o estoque de equipamentos e materiais de T.I. do meu trabalho.
+I'm a Systems Analysis and Development student and an IT intern. This project started as practice for a Python + OOP + SQLAlchemy course, but instead of leaving it as a disconnected exercise, I pointed it at a real problem: my workplace's IT inventory had no structured tracking, just loose spreadsheets. So the project became both a study tool and something I plan to actually use at work.
 
-Por isso o sistema é propositalmente simples. A ideia não foi construir algo comercial ou genérico, mas um projeto de estudo que resolve um problema concreto do dia a dia controlar entrada, saída e cadastro de itens de forma organizada, sem depender de planilhas soltas.
+## Why it's scoped the way it is
 
-## Funcionalidades
+This isn't meant to be a commercial or generic inventory system. The scope is intentionally minimal for this phase — no movement history, no supplier data, no cost tracking — just correct, validated CRUD on `Item` and `ItemHardware`. Hardware is only the first category modeled this way; more category classes are planned as the project grows.
 
-- Cadastrar novos itens no estoque (categoria, nome e quantidade)
-- Listar todos os itens cadastrados
-- Aumentar a quantidade de um item existente
-- Diminuir a quantidade de um item existente
-- Excluir um item do estoque
+## What's done
 
-Todas as operações validam a entrada do usuário e tratam erros de forma que o programa nunca trava sempre retorna uma mensagem clara e volta ao menu.
+- **Register items** — category, name, quantity, and status (`Lixo` / `Funcionando` / `Conserto`), with full input validation (no empty fields, status must match one of the three options, quantity must be a positive integer)
+- **List items** — filter by all items or by hardware category specifically
+- **Adjust stock** — increase or decrease quantity, with guards against negative numbers and against removing more than what's in stock
+- **Delete an item**
+- **ItemHardware** — a 1:1 relationship to `Item` via a shared primary key/foreign key (`item_id`), so hardware-specific items don't duplicate the base item's data
+- **Error handling throughout** — every database operation is wrapped in `try/except`, with rollback on failure; the program never crashes, it always returns a clear message and goes back to the menu
+- **Proper entry point** (`if __name__ == "__main__"`) and a pinned `requirements.txt` for reproducible installs
+- **No machine-specific files tracked** — a personal Windows shortcut script was removed from the repo, since it hardcoded a local path and had no value for anyone else cloning the project
 
-## Tecnologias
+## Tech stack
 
 - Python
 - SQLAlchemy (ORM)
 - SQLite
 
-## Como rodar
+## Running it
 
 ```bash
-# clonar o repositório
-git clone <https://github.com/douglaskevin201/estoque-t.i>
+git clone https://github.com/douglaskevin201/estoque-t.i
 cd estoque-t.i
 
-# instalar dependências
-pip install sqlalchemy
+pip install -r requirements.txt
 
-# rodar o sistema
 python menu.py
 ```
 
-O banco de dados (`estoque.db`) é criado automaticamente na primeira execução.
+The database (`estoque.db`) is created automatically on first run.
 
-## Decisões técnicas e aprendizados
+## Technical decisions
 
-Algumas escolhas do projeto vieram de problemas reais que apareceram durante o desenvolvimento, não de decisões definidas de antemão:
+Some choices came from real problems found during development, not decisions made upfront:
 
-- **Tratamento de erros com `try/except`**: toda operação que mexe no banco ou recebe entrada do usuário está protegida contra falhas desde digitar uma letra onde se espera um número, até tentar remover mais itens do que existem em estoque. Em vez de deixar o programa quebrar, cada erro é capturado e devolve uma mensagem compreensível.
+- **IDs are not reused after deletion** — deleting an item doesn't reclaim its ID for the next entry; the sequence keeps moving forward. This is SQLite/SQLAlchemy's default behavior, kept intentionally to avoid ambiguity if other tables ever reference these IDs.
+- **`models.py` and `menu.py` are separate** — business logic and data classes are isolated from the user-interaction layer, for easier maintenance and future expansion.
+- **No API yet, on purpose** — kept to plain Python + SQLAlchemy for this phase, to consolidate those concepts before introducing an API layer.
 
-- **IDs não são reaproveitados após exclusão**: ao excluir um item, o próximo cadastro não "preenche" o ID que ficou vago ele segue a sequência normalmente. Esse é o comportamento padrão do SQLite/SQLAlchemy, e é proposital: reaproveitar IDs cria risco de ambiguidade caso, no futuro, outras tabelas venham a referenciar esses identificadores.
+## Roadmap
 
-- **Separação entre `models.py` e `menu.py`**: as classes e regras de negócio ficam isoladas da camada de interação com o usuário, facilitando manutenção e futuras expansões.
+1. ✅ Core data model (`Item`, `ItemHardware`) with SQLAlchemy
+2. ✅ Full CRUD with validation and error handling
+3. ✅ List filtering (all items / hardware only)
+4. ✅ Pinned dependencies (`requirements.txt`) and proper entry point
+5. ⬜ Additional category classes beyond `ItemHardware` (following the same 1:1 relationship pattern)
+6. ⬜ API layer to host the database elsewhere
+7. ⬜ Broader search (by name, by status, not just hardware filter)
+8. ⬜ Application/interface layer for real day-to-day use at work
+9. ⬜ Move off the local `.bat` shortcut toward a proper install/run flow
 
-- **Sem API nessa etapa**: o projeto foi mantido em Python puro + SQLAlchemy de propósito, para consolidar esses conceitos isoladamente antes de introduzir uma camada de API.
+## On AI usage
 
-### Sobre o uso de IA no desenvolvimento
+Claude was used as a study aid throughout the project, with a deliberately limited role: reviewing code I wrote myself, pointing out real bugs, logic that didn't behave as expected, and redundant code — never writing the finished solution for me. When I had a conceptual doubt (e.g. `print` vs `raise`, or why use `try/except`), it explained the reasoning, and I applied the fix myself.
 
-Usei o Claude como apoio de estudo ao longo de todo o projeto, mas com um papel bem delimitado: revisar o código que eu mesmo escrevia, apontando bugs reais, lógica que não funcionava como eu esperava, e código redundante  sem nunca escrever a solução pronta em meu lugar. Quando eu tinha dúvida conceitual (por exemplo, a diferença entre `print` e `raise`, ou por que usar `try/except`), a IA explicava o "porquê" por trás, e eu aplicava a correção sozinho.
-
-Esse mesmo formato de ajuda guiada foi o que pedi para replicar ao usar outras IAs de apoio no dia a dia do desenvolvimento, como o GitHub Copilot: revisão de código, apontamento de problemas e perguntas que me ajudassem a pensar na lógica nunca a entrega da implementação final.
-
-## Possíveis próximos passos
-
-- Adicionar uma API para hospedar o banco de dados em outro ambiente
-- Implementar busca por categoria
-- Transformar o sistema em um programa com interface, facilitando o uso no dia a dia do trabalho
+I asked for the same guided-help format from other AI tools used day-to-day, like GitHub Copilot: code review and questions that push my thinking, never the final implementation handed to me.
