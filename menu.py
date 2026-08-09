@@ -224,9 +224,9 @@ def listar_itens():
 
 
 
-
-menu_principal()
-session.close()
+if __name__ == "__main__":
+    menu_principal()
+    session.close()
 
 
 
