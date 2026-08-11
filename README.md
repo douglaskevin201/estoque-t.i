@@ -4,7 +4,7 @@ Terminal-based IT inventory management system, built with Python (OOP) and SQLAl
 
 ## Where this came from
 
-Practice project for a Python + OOP + SQLAlchemy course, pointed at a real problem: my workplace's IT inventory had no structured tracking, just loose spreadsheets. It's both a study tool and something I plan to use at work.
+Practice project for a Python + OOP + SQLAlchemy course, pointed at a real problem: my workplace had no IT inventory control at all. It's both a study tool and something I plan to use at work.
 
 ## Scope
 
