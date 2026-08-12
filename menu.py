@@ -1,9 +1,9 @@
-from models import Item, ItemHardware, session
+from models import Item, ItemHardware, ItemPeriferico,ItemComputador, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
 
 lista_status = ['LIXO', 'FUNCIONANDO', 'CONSERTO']
-
+lista_categorias = ['PERIFERICO', 'DESKTOP', 'NOTEBOOK', 'HARDWARE']
 
 
 
@@ -135,12 +135,15 @@ def menu_principal():
 
 def cadastrar_item():
     while True:
-        categoria = input("Categoria: ").strip()
+        categoria = input("Categoria: ").strip().upper()
         if not categoria:
             print("Erro: Categoria não deve ter campo vazio.")
             continue
+        if categoria not in lista_categorias:
+            print("Erro: Categoria deve ser uma das opções validas!")
+            continue
 
-        nome = input("Nome: ").strip()
+        nome = input("Nome: ").strip().upper()
         if not nome:
             print("Erro: O nome não deve ter campo vazio.")
             continue
@@ -152,11 +155,7 @@ def cadastrar_item():
         if status not in lista_status:
             print("Erro: Status deve estar entre as 3 opções indicadas!")
             continue
-
-        categoria = categoria.upper()
-        nome = nome.upper()            
-        
-        
+                
         try:
             quantidade = int(input("Quantidade: "))
             if quantidade <= 0:
@@ -167,16 +166,35 @@ def cadastrar_item():
             print("ERRO: Digite apenas números inteiros.")
             continue
 
+        setor = None
+        responsavel = None
+        if categoria == 'DESKTOP' or categoria == 'NOTEBOOK':
+            setor = input("Setor: ").strip().upper()
+            if not setor:
+                print("Setor não pode ser um campo vazio.")
+                continue  
+            responsavel = input("Usuario responsável (deixe em branco se for do T.I): ").strip().upper()
+            if not responsavel:
+                responsavel = 'T.I'
         try:
             novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade, status=status)
             session.add(novo_item)
             session.commit()
             print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
             if categoria == 'HARDWARE':
-                novo_hardware = ItemHardware(item_id=novo_item.id)
-                session.add(novo_hardware)
+                session.add(ItemHardware(item_id=novo_item.id))
                 session.commit()
+
+            elif categoria == 'PERIFERICO':
+                session.add(ItemPeriferico(item_id=novo_item.id))
+                session.commit()
+
+            elif categoria == 'DESKTOP' or categoria == 'NOTEBOOK':
+                session.add(ItemComputador(item_id=novo_item.id, setor=setor, responsavel=responsavel))
+                session.commit()
+
             break
+
         except SQLAlchemyError as e:
             session.rollback()
             print("Erro ao salvar o item:", e)
