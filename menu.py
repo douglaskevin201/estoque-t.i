@@ -195,28 +195,25 @@ def cadastrar_item():
                 continue
         try:
             novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade, status=status)
-            session.add(novo_item)
-            session.commit()
-            print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Unidade.")
+
             if categoria == 'HARDWARE':
-                session.add(ItemHardware(item_id=novo_item.id))
-                session.commit()
+                novo_item.hardware = ItemHardware()
 
             elif categoria == 'PERIFERICO':
-                session.add(ItemPeriferico(item_id=novo_item.id))
-                session.commit()
+                novo_item.periferico = ItemPeriferico()
 
             elif categoria == 'DESKTOP' or categoria == 'NOTEBOOK':
-                session.add(ItemComputador(item_id=novo_item.id, setor=setor, responsavel=responsavel))
-                session.commit()
+                novo_item.computador = ItemComputador(setor=setor, responsavel=responsavel)
 
             elif categoria == 'PROJETOR':
-                session.add(ItemProjetor(item_id=novo_item.id, modelo=modelo))
-                session.commit()
+                novo_item.projetor = ItemProjetor(modelo=modelo)
 
             elif categoria == 'ACESSORIO':
-                session.add(ItemAcessorio(item_id=novo_item.id))
-                session.commit()
+                novo_item.acessorio = ItemAcessorio()
+   
+            session.add(novo_item)
+            session.commit() 
+            print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Unidade.")
             break
 
         except SQLAlchemyError as e:
