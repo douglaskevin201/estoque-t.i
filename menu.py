@@ -146,7 +146,7 @@ def menu_principal():
 def cadastrar_item():
     while True:
         print("\n--- LISTA DE CATEGORIAS ---")
-        print("PERIFERICO | DESKTOP | NOTEBOOK | HARDWARE | PROJETOR | ACESSORIO")
+        print("PERIFERICO | DESKTOP/NOTEBOOK | HARDWARE | PROJETOR | ACESSORIO")
         categoria = input("Categoria: ").strip().upper()
         if not categoria:
             print("Erro: Categoria não deve ter campo vazio.")
