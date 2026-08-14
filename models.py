@@ -51,7 +51,7 @@ class ItemHardware(Base):
     item_id = Column(Integer, ForeignKey("itens.id"),primary_key=True)
     item = relationship("Item", back_populates="hardware")
     
-
+ 
 class ItemPeriferico(Base):
     __tablename__ = "periferico"
 

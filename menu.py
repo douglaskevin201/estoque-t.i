@@ -17,17 +17,18 @@ def menu():
             print("3 - Aumentar estoque")
             print("4 - Diminuir estoque")
             print("5 - Apagar item do estoque")
-            print("6 - Sair")
+            print("6 - Lixeira")
+            print("7 - Sair")
             opcao = int(input("Escolha uma opcao: "))
-            if 1 <= opcao <= 6:
+            if 1 <= opcao <= 7:
                 return opcao
             else:
-                print("Opção invalida. Escolha um número entre 1 e 6.")
+                print("Opção invalida. Escolha um número entre 1 e 7.")
         except ValueError:
             print("Entrada inválida. Digite o número da opção.")
         except KeyboardInterrupt:
             print("\nInterrompido pelo usuário. Saindo.")
-            return 6
+            return 7
 
 
 
@@ -125,8 +126,17 @@ def menu_principal():
                     session.rollback()
                     print("Erro ao excluir item do estoque!", str(e))
 
-
         elif opcao == 6:
+            item_lixo = session.query(Item).filter_by(status='LIXO').all()
+            if not item_lixo:
+                print("Nenhum item encontrado na lixeira!")
+            else:
+                print("\n --- ITENS NA LIXEIRA ---")
+                for lixo in item_lixo:
+                    print(f"ID: {lixo.id} | Nome: {lixo.nome}| Categoria: {lixo.categoria} | Quantidade: {lixo.quantidade} | Status: {lixo.status}")
+                    print("-" * 20)
+
+        elif opcao == 7:
             print("Saindo do programa...")
             sleep(1)
             break
@@ -213,52 +223,49 @@ def cadastrar_item():
             session.rollback()
             print("Erro ao salvar o item:", e)
             break
-                    
 
-                    
 def listar_itens():
+    categorias = [c[0] for c in session.query(Item.categoria).distinct().all()]
+
+    print("\nSelecione a categoria")
+    print("0 - Todos")
+    for i, cat in enumerate(categorias, start=1):
+        print(f"{i} - {cat}")
+
     while True:
         try:
-            print("\nSelecione a categoria")
-            print("1 - Todos")
-            print("2 - Hardware")
             opcao = int(input("Escolha uma opção: "))
 
-            if opcao == 1 :
+            if opcao == 0:
                 itens = session.query(Item).all()
-                if not itens:
-                    print("Nenhum Item encontrado")
-                    return
-                print("\n--- ITENS NO ESTOQUE --- ")
-                for item in itens:
-                    print(f"ID: {item.id} | Categoria: {item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Status: {item.status} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
-                    print("-" * 20)
-                    
-
-            elif opcao == 2:
-                hw = session.query(ItemHardware).all()
-                if not hw:
-                    print("Tabela de hardware está vazia!")
-                    return
-                print("\n--- ITENS HARDWARE NO ESTOQUE ---")
-                for hws in hw:
-                    print(f"ID: {hws.item.id} | Nome: {hws.item.nome} | Quantidade: {hws.item.quantidade} | Status: {hws.item.status} | Data: {hws.item.data.strftime('%d/%m/%y %H:%M:%S')}")
-                    print("-" * 20)
-
-            else:
-                print("Erro: Numero invalido! Digite um numero dentre as opcoes")
+            elif opcao < 0 or opcao > len(categorias):
+                print("Erro: Digite uma opcao valida!")
                 continue
+            else:
+                categoria_escolhida = categorias[opcao - 1]
+                itens = session.query(Item).filter_by(categoria=categoria_escolhida).all()
+
+            if not itens:
+                print("Nenhum Item encontrado.")
+                return
+            else:
+                print("\n --- Itens no Estoque ---")
+                for item in itens:
+                    print(f"ID: {item.id} | Categoria:{item.categoria} | Nome: {item.nome} | Quantidade: {item.quantidade} | Status: {item.status} | Data: {item.data.strftime('%d/%m/%Y %H:%M:%S')}")
         except ValueError:
-                    print("Entrada inválida. Digite o número da opção.")
-                    continue
-        break    
-        
+            print("Erro: Entrada invalida! Digite o numero da opção.")
+            continue
+
+        break
 
 
 
 if __name__ == "__main__":
-    menu_principal()
-    session.close()
+    try:
+        menu_principal()
+    finally:
+        session.close()
+        print("Sessão finalizada com segurança.")
 
 
 
