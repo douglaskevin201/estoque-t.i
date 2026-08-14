@@ -21,6 +21,10 @@ class Item(Base):
     hardware = relationship("ItemHardware", back_populates="item", uselist=False, cascade="all, delete-orphan")
     periferico = relationship("ItemPeriferico", back_populates="item", uselist=False, cascade="all, delete-orphan")
     computador = relationship("ItemComputador", back_populates="item", uselist=False, cascade="all, delete-orphan")
+    projetor = relationship("ItemProjetor", back_populates="item", uselist=False, cascade="all, delete-orphan")
+    acessorio = relationship("ItemAcessorio", back_populates="item", uselist=False, cascade="all, delete-orphan")
+
+
 
     def aumentar_estoque(self, quantidade):
         if quantidade <= 0:
@@ -63,7 +67,18 @@ class ItemComputador(Base):
     responsavel = Column(String(500))
     item = relationship("Item", back_populates="computador")
 
+class ItemProjetor(Base):
+    __tablename__ = "projetor"
 
+    item_id = Column(Integer, ForeignKey("itens.id"), primary_key=True)
+    modelo = Column(String(500))
+    item = relationship("Item", back_populates="projetor")
+
+class ItemAcessorio(Base):
+    __tablename__ = "acessorio"
+
+    item_id = Column(Integer, ForeignKey("itens.id"), primary_key=True)
+    item = relationship("Item", back_populates="acessorio")
 
 
 Base.metadata.create_all(engine)

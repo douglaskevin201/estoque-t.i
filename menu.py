@@ -1,9 +1,9 @@
-from models import Item, ItemHardware, ItemPeriferico,ItemComputador, session
+from models import Item, ItemHardware, ItemPeriferico, ItemComputador,ItemProjetor,ItemAcessorio, session
 from time import sleep
 from sqlalchemy.exc import SQLAlchemyError
 
 lista_status = ['LIXO', 'FUNCIONANDO', 'CONSERTO']
-lista_categorias = ['PERIFERICO', 'DESKTOP', 'NOTEBOOK', 'HARDWARE']
+lista_categorias = ['PERIFERICO', 'DESKTOP', 'NOTEBOOK', 'HARDWARE', 'PROJETOR', 'ACESSORIO']
 
 
 
@@ -135,6 +135,8 @@ def menu_principal():
 
 def cadastrar_item():
     while True:
+        print("\n--- LISTA DE CATEGORIAS ---")
+        print("PERIFERICO | DESKTOP | NOTEBOOK | HARDWARE | PROJETOR | ACESSORIO")
         categoria = input("Categoria: ").strip().upper()
         if not categoria:
             print("Erro: Categoria não deve ter campo vazio.")
@@ -176,11 +178,16 @@ def cadastrar_item():
             responsavel = input("Usuario responsável (deixe em branco se for do T.I): ").strip().upper()
             if not responsavel:
                 responsavel = 'T.I'
+        elif categoria == 'PROJETOR':
+            modelo = input("Modelo: ").strip().upper()
+            if not modelo:
+                print("Modelo não pode ser um campo vazio.")
+                continue
         try:
             novo_item = Item(categoria=categoria, nome=nome, quantidade=quantidade, status=status)
             session.add(novo_item)
             session.commit()
-            print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Qnt.")
+            print(f"{novo_item.nome} cadastrado com sucesso com: {novo_item.quantidade} Unidade.")
             if categoria == 'HARDWARE':
                 session.add(ItemHardware(item_id=novo_item.id))
                 session.commit()
@@ -193,6 +200,13 @@ def cadastrar_item():
                 session.add(ItemComputador(item_id=novo_item.id, setor=setor, responsavel=responsavel))
                 session.commit()
 
+            elif categoria == 'PROJETOR':
+                session.add(ItemProjetor(item_id=novo_item.id, modelo=modelo))
+                session.commit()
+
+            elif categoria == 'ACESSORIO':
+                session.add(ItemAcessorio(item_id=novo_item.id))
+                session.commit()
             break
 
         except SQLAlchemyError as e:
