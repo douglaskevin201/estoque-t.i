@@ -9,6 +9,20 @@ lista_categorias = ['PERIFERICO', 'DESKTOP', 'NOTEBOOK', 'HARDWARE', 'PROJETOR',
 
 
 def menu():
+
+    """Exibe o menu principal e lê a opção escolhida pelo usuário.
+
+    Repete a leitura até receber um número válido entre 1 e 7.
+
+    Returns:
+        int: a opção escolhida (1 a 7). Retorna 7 (Sair) também em
+            caso de interrupção pelo teclado (Ctrl+C).
+
+    Raises:
+        ValueError: tratado internamente — não propaga para quem
+        chama a função.
+    """
+
     while True:
         try:
             print("\nEstoque T.I UniEnsino")
@@ -30,9 +44,16 @@ def menu():
             print("\nInterrompido pelo usuário. Saindo.")
             return 7
 
-
-
 def menu_principal():
+
+    """Loop principal do programa.
+
+    Exibe o menu, lê a opção escolhida via menu() e direciona para
+    a função ou bloco correspondente (cadastro, listagem, ajuste de
+    estoque, exclusão, lixeira). Roda indefinidamente até a opção
+    de sair ser escolhida. 
+    """
+
     while True:
         opcao = menu()
         if opcao == 1:
@@ -141,12 +162,24 @@ def menu_principal():
             sleep(1)
             break
             
-
-
 def cadastrar_item():
+
+    """ Cadastra novo item no estoque.
+    
+        Coleta categoria, nome, status e quantidade via input do usuário,
+        validando cada campo. Dependendo da categoria escolhida, também
+        coleta campos extras (setor/resposável para Desktop/Notebook,
+        modelo para Projetor) e associa a subclasse correspondente ao 
+        Item antes de persistir tudo numa única transação.
+
+        Raises:
+            SQLAlchemyError: se ocorrer erro ao salvar no banco; a
+                transação é revertida com rollback.
+        """
+
     while True:
         print("\n--- LISTA DE CATEGORIAS ---")
-        print("PERIFERICO | DESKTOP/NOTEBOOK | HARDWARE | PROJETOR | ACESSORIO")
+        print("PERIFERICO | DESKTOP | NOTEBOOK | HARDWARE | PROJETOR | ACESSORIO")
         categoria = input("Categoria: ").strip().upper()
         if not categoria:
             print("Erro: Categoria não deve ter campo vazio.")
@@ -222,6 +255,19 @@ def cadastrar_item():
             break
 
 def listar_itens():
+
+    """Lista os itens do estoque, com filtro opcional por categoria.
+
+    As opções de categoria exibidas são construídas dinamicamente a
+    partir das categorias já cadastradas no banco (via .distinct()),
+    não de uma lista fixa — uma categoria só aparece como opção se
+    já existir pelo menos um item cadastrado nela.
+
+    Raises:
+        ValueError: tratado internamente — não propaga para quem
+        chama a função.
+    """
+
     categorias = [c[0] for c in session.query(Item.categoria).distinct().all()]
 
     print("\nSelecione a categoria")
