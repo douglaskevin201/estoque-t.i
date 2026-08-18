@@ -30,7 +30,7 @@ def menu():
             print("2 - Listar itens")
             print("3 - Aumentar estoque")
             print("4 - Diminuir estoque")
-            print("5 - Apagar item do estoque")
+            print("5 - Enviar item para lixeira")
             print("6 - Lixeira")
             print("7 - Sair")
             opcao = int(input("Escolha uma opcao: "))
@@ -126,7 +126,7 @@ def menu_principal():
 
             while True:
                 try:
-                    id_item = int(input("ID do Item a ser excluido: "))
+                    id_item = int(input("ID do Item a ser movido para lixeira: "))
                     break
                 except ValueError:
                     print("Digite somente números inteiros!")
@@ -138,14 +138,14 @@ def menu_principal():
 
             else:
                 try:
-                    session.delete(item)
+                    item.status = 'LIXO'
                     session.commit()
-                    print("Produto exluido com sucesso!")
+                    print("Item movido para lixeira com sucesso!")
                     
 
                 except SQLAlchemyError as e:
                     session.rollback()
-                    print("Erro ao excluir item do estoque!", str(e))
+                    print("Erro ao enviar item para lixeira!", str(e))
 
         elif opcao == 6:
             item_lixo = session.query(Item).filter_by(status='LIXO').all()
@@ -268,7 +268,12 @@ def listar_itens():
         chama a função.
     """
 
-    categorias = [c[0] for c in session.query(Item.categoria).distinct().all()]
+    categorias = [
+        c[0] for c in session.query(Item.categoria)
+        .filter(Item.status != 'LIXO')
+        .distinct()
+        .all()
+    ]
 
     print("\nSelecione a categoria")
     print("0 - Todos")
@@ -280,13 +285,17 @@ def listar_itens():
             opcao = int(input("Escolha uma opção: "))
 
             if opcao == 0:
-                itens = session.query(Item).all()
+                itens = session.query(Item).filter(Item.status != 'LIXO').all()
+
             elif opcao < 0 or opcao > len(categorias):
                 print("Erro: Digite uma opcao valida!")
                 continue
             else:
                 categoria_escolhida = categorias[opcao - 1]
-                itens = session.query(Item).filter_by(categoria=categoria_escolhida).all()
+                itens = session.query(Item).filter(
+                    Item.categoria == categoria_escolhida,
+                    Item.status != 'LIXO'
+                ).all()
 
             if not itens:
                 print("Nenhum Item encontrado.")
